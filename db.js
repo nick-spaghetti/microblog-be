@@ -1,10 +1,23 @@
-/** Database connection for Microblog. */
-
+"use strict";
+/** Database setup for jobly. */
 const { Client } = require("pg");
+const { getDatabaseUri } = require("./config");
 
-const client = new Client(process.env.DATABASE_URL || "postgresql:///microblog");
+let db;
 
-client.connect();
+if (process.env.NODE_ENV === "production") {
+	db = new Client({
+		connectionString: getDatabaseUri(),
+		ssl: {
+			rejectUnauthorized: false,
+		},
+	});
+} else {
+	db = new Client({
+		connectionString: getDatabaseUri(),
+	});
+}
 
+db.connect();
 
-module.exports = client;
+module.exports = db;
